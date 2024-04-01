@@ -11,7 +11,6 @@ on:
     
 env:
   IMAGE_VER: v0.1
-  IMAGE_TAG: ${{ env.IMAGE_VER }}-${{ GITHUB_RUN_ATTEMPT }}
   
 jobs:
   build-test:
@@ -30,6 +29,8 @@ jobs:
   docker:
     needs: build-test
     runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: ${{ env.IMAGE_VER }}-${{ GITHUB_RUN_ATTEMPT }}
     steps:
       -
         name: Set up QEMU
