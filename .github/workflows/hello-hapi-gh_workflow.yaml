@@ -10,8 +10,8 @@ on:
     branches: main
     
 env:
-  IMAGE_VER: "v0.1"
-  IMAGE_TAG: ${IMAGE_VER}-${GITHUB_RUN_ATTEMPT}
+  IMAGE_VER: v0.1
+  IMAGE_TAG: ${{ env.IMAGE_VER }}-${{ GITHUB_RUN_ATTEMPT }}
   
 jobs:
   build-test:
@@ -24,8 +24,8 @@ jobs:
       - run: npm install
       - run: npm test
       - run: |
-            echo "IMAGE_VER= $IMAGE_VER"
-            echo "IMAGE_TAG= $IMAGE_TAG"
+            echo $IMAGE_VER
+            echo $IMAGE_VER-$GITHUB_RUN_ATTEMPT
       
   docker:
     needs: build-test
@@ -48,5 +48,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/hello-hapi-ghaction:${IMAGE_TAG},${{ secrets.DOCKERHUB_USERNAME }}/hello-hapi-ghaction:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/hello-hapi-ghaction:${{ env.IMAGE_VER }}-${{ GITHUB_RUN_ATTEMPT }},${{ secrets.DOCKERHUB_USERNAME }}/hello-hapi-ghaction:latest
     
