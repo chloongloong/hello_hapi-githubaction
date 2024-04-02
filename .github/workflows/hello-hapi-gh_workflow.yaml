@@ -8,7 +8,11 @@ on:
     branches: main
   pull_request:
     branches: main
-    
+
+env:
+  IMAGE_VER: v0.1
+  IMAGE_TAG: 0
+  
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -29,7 +33,6 @@ jobs:
     needs: build-test
     runs-on: ubuntu-latest
     env:
-      IMAGE_VER: v0.1
       DOCKERHUB_REGISTRY: ${{ secrets.DOCKERHUB_USERNAME }}/hello-hapi-ghaction
     steps:
       -
@@ -70,5 +73,5 @@ jobs:
             token: ${{ secrets.MY_GITHUB_ACTIONS_PAT }}
             repository: chloongloong/hello-hapi-deployment-manifest-ghaction
             event-type: my-event
-            client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+            client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}", "IMAGE_TAG": "${{ env.IMAGE_TAG }}"}'
     
