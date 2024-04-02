@@ -29,13 +29,8 @@ jobs:
   docker:
     needs: build-test
     runs-on: ubuntu-latest
-    env:
-        IMAGE_TAG: ${{ env.IMAGE_VER }}-${{ github.run_attempt }}
-        DOCKERHUB_REGISTRY: ${{ secrets.DOCKERHUB_USERNAME }}/hello-hapi-ghaction
+    
     steps:
-      - run:  |
-              echo "Image version:" $IMAGE_TAG
-              echo "Image registry:" $DOCKERHUB_REGISTRY
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -51,6 +46,9 @@ jobs:
       -
         name: Build and push
         uses: docker/build-push-action@v5
+        env:
+          IMAGE_TAG: ${{ env.IMAGE_VER }}-${{ github.run_attempt }}
+          DOCKERHUB_REGISTRY: ${{ secrets.DOCKERHUB_USERNAME }}/hello-hapi-ghaction
         with:
           push: true
           tags: ${{ env.DOCKERHUB_REGISTRY }}:${{ env.IMAGE_TAG }},${{ env.DOCKERHUB_REGISTRY }}:latest
