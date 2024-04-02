@@ -64,8 +64,9 @@ jobs:
           # More ppl using this action although there are others actions similar to this
           uses: peter-evans/repository-dispatch@v3
           with:
-            # create a PAT in the targetted repo (hello-hapi-deployment-manifest-ghaction) 
-            # and add secret variable with name MY_GITHUB_ACTIONS_PAT with the generated token as value using the github UI
+            # create a PAT using the github UI for this account where this repo is under 
+            # and add secret variable with name MY_GITHUB_ACTIONS_PAT (under hello-hapi-githubaction) 
+            # with the generated token as value using the github UI
             token: ${{ secrets.MY_GITHUB_ACTIONS_PAT }}
             repository: chloongloong/hello-hapi-deployment-manifest-ghaction
             event-type: my-event
