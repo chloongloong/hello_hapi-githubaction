@@ -8,6 +8,7 @@ on:
     branches: main
   pull_request:
     branches: main
+  workflow_dispatch:
 
 env:
   IMAGE_TAG: v0.1-${{ github.run_number }}
