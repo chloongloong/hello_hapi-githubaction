@@ -9,9 +9,6 @@ on:
   pull_request:
     branches: main
     
-env:
-  IMAGE_VER: v0.1
-  
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -32,7 +29,9 @@ jobs:
   docker:
     needs: build-test
     runs-on: ubuntu-latest
-    
+    env:
+      IMAGE_VER: v0.1
+      DOCKERHUB_REGISTRY: ${{ secrets.DOCKERHUB_USERNAME }}/hello-hapi-ghaction
     steps:
       -
         name: Set up QEMU
@@ -49,9 +48,9 @@ jobs:
       -
         name: Build and push
         uses: docker/build-push-action@v5
-        env:
+        # some how this env need to define here otherwise below image_tag ref to env.image_ver will throw error... yet to find the reason
+        env: 
           IMAGE_TAG: ${{ env.IMAGE_VER }}-${{ github.run_number }}
-          DOCKERHUB_REGISTRY: ${{ secrets.DOCKERHUB_USERNAME }}/hello-hapi-ghaction
         with:
           push: true
           tags: ${{ env.DOCKERHUB_REGISTRY }}:${{ env.IMAGE_TAG }},${{ env.DOCKERHUB_REGISTRY }}:latest
