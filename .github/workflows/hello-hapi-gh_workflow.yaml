@@ -23,13 +23,19 @@ jobs:
       - run: npm install
       - run: npm test
       - run: |
-            echo $IMAGE_VER
-            echo $IMAGE_VER-$GITHUB_RUN_ATTEMPT
+              echo $IMAGE_VER
+              echo $IMAGE_VER-$GITHUB_RUN_ATTEMPT
       
   docker:
     needs: build-test
     runs-on: ubuntu-latest
+    env:
+        IMAGE_TAG: ${{ env.IMAGE_VER }}-${{ github.run_attempt }}
+        DOCKERHUB_REGISTRY: ${{ secrets.DOCKERHUB_USERNAME }}/hello-hapi-ghaction
     steps:
+      - run:  |
+              echo "Image version:" $IMAGE_TAG
+              echo "Image registry:" $DOCKERHUB_REGISTRY
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -45,9 +51,7 @@ jobs:
       -
         name: Build and push
         uses: docker/build-push-action@v5
-        env:
-          IMAGE_TAG: ${{ env.IMAGE_VER }}-${{ github.run_attempt }}
         with:
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/hello-hapi-ghaction:${{ env.IMAGE_VER }}-${{ github.run_attempt }},${{ secrets.DOCKERHUB_USERNAME }}/hello-hapi-ghaction:latest
+          tags: ${{ env.DOCKERHUB_REGISTRY }}:${{ env.IMAGE_TAG }},${{ env.DOCKERHUB_REGISTRY }}:latest
     
