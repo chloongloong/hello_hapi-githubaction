@@ -10,8 +10,7 @@ on:
     branches: main
 
 env:
-  IMAGE_VER: v0.1
-  IMAGE_TAG: 0
+  IMAGE_TAG: v0.1-${{ github.run_number }}
   
 jobs:
   build-test:
@@ -20,14 +19,14 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
       - run: npm install
       - run: npm test
       - run: |
               echo "github attempt:" $GITHUB_RUN_ATTEMPT
               echo "github number:" $GITHUB_RUN_NUMBER
-              echo "using attempt number:" $IMAGE_VER-$GITHUB_RUN_ATTEMPT
-              echo "using run number:" $IMAGE_VER-$GITHUB_RUN_NUMBER
+              echo "using attempt number:" $IMAGE_TAG
+              echo "using run number:" $IMAGE_TAG
       
   docker:
     needs: build-test
@@ -51,8 +50,8 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         # some how this env need to define here otherwise below image_tag ref to env.image_ver will throw error... yet to find the reason
-        env: 
-          IMAGE_TAG: ${{ env.IMAGE_VER }}-${{ github.run_number }}
+        #env: 
+        #  IMAGE_TAG: ${{ env.IMAGE_VER }}-${{ github.run_number }}
         with:
           push: true
           tags: ${{ env.DOCKERHUB_REGISTRY }}:${{ env.IMAGE_TAG }},${{ env.DOCKERHUB_REGISTRY }}:latest
