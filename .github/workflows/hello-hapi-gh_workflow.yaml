@@ -20,7 +20,6 @@ jobs:
       - run: npm install
       - run: npm test
       - run: |
-              echo $IMAGE_VER
               echo "github attempt:" $GITHUB_RUN_ATTEMPT
               echo "github number:" $GITHUB_RUN_NUMBER
               echo "using attempt number:" $IMAGE_VER-$GITHUB_RUN_ATTEMPT
@@ -54,4 +53,21 @@ jobs:
         with:
           push: true
           tags: ${{ env.DOCKERHUB_REGISTRY }}:${{ env.IMAGE_TAG }},${{ env.DOCKERHUB_REGISTRY }}:latest
+
+  trigger:
+    needs: [build-test, docker]
+    runs-on: ubuntu-latest
+    steps:
+        - 
+          name: Repository Dispatch
+          # this action is used for trigger external action in another repo and pass some vars. 
+          # More ppl using this action although there are others actions similar to this
+          uses: peter-evans/repository-dispatch@v3
+          with:
+            # create a PAT in the targetted repo (hello-hapi-deployment-manifest-ghaction) 
+            # and add secret variable with name MY_GITHUB_ACTIONS_PAT with the generated token as value using the github UI
+            token: ${{ secrets.MY_GITHUB_ACTIONS_PAT }}
+            repository: chloongloong/hello-hapi-deployment-manifest-ghaction
+            event-type: my-event
+            client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
     
