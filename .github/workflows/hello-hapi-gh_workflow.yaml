@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 16
       - run: npm install
       - run: npm test
       - run: |
@@ -50,6 +50,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         # some how this env need to define here otherwise below image_tag ref to env.image_ver will throw error... yet to find the reason
+        # temporary not define here but at global with direct put v0.1 into it instead IMAGE_VER which throw error if this define at global env
         #env: 
         #  IMAGE_TAG: ${{ env.IMAGE_VER }}-${{ github.run_number }}
         with:
